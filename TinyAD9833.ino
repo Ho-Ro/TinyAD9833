@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
 // serial interface to the AD9833 DDS using a digispark AtTiny85
 
 #include <DigiCDC.h>
@@ -179,6 +180,10 @@ void parseCommand( void ) {
                 SerialUSB.println();
                 showHelp();
                 break;
+            case 'D':
+                SerialUSB.println();
+                debug = *digitArray; // lowest digit
+                break;
             case 'E':
                 SerialUSB.println();
                 echo = *digitArray; // lowest digit
@@ -198,6 +203,11 @@ void parseCommand( void ) {
                 SerialUSB.println();
                 AD9833_reset();
                 break;
+            // disable rect due to too high output voltage / power (AC: 20 dBm)
+            // case 'R': // Rectangle
+            //    waveType = wRectangle;
+            //    AD9833_setFrequency(); // SigGen wave is rectangle
+            //    break;
             case 'S': // Sine
                 waveType = wSine;
                 SerialUSB.println();
@@ -207,15 +217,6 @@ void parseCommand( void ) {
                 SerialUSB.println();
                 waveType = wTriangle;
                 AD9833_setFrequency(); // SigGen wave is triangle
-                break;
-            // disable rect due to too high output voltage / power (AC: 20 dBm)
-            // case 'R': // Rectangle
-            //    waveType = wRectangle;
-            //    AD9833_setFrequency(); // SigGen wave is rectangle
-            //    break;
-            case 'Z':
-                SerialUSB.println();
-                debug = *digitArray; // lowest digit
                 break;
             default:
                 return;
@@ -232,7 +233,7 @@ void showHelp() {
     SerialUSB.println( F( "S:Sin, T:Tri, O:Off" ) );
     SerialUSB.println( F( "N: to reg, n*0.093 Hz Sin" ) );
     SerialUSB.println( F( "E: echo" ) );
-    SerialUSB.println( F( "Z: debug" ) );
+    SerialUSB.println( F( "D: debug" ) );
 }
 
 
