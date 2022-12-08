@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-or-later
+// SPDX-License-Identifier: GPL-3.0-or-later
 // serial interface to the AD9833 DDS using a digispark AtTiny85
 
 #include <DigiCDC.h>
@@ -301,13 +301,16 @@ void AD9833_writeRegister( word dat ) {
     }
     CLK_HIGH();
     FSYNC_LOW();
-    for ( byte iii = 0; iii < 16; ++iii ) {
+    byte iii = 16;
+    while ( iii ) {
         if ( dat & 0x8000 )
             DATA_HIGH();
         else
             DATA_LOW();
-        dat = dat << 1;
+        // put calculation between CLK_LOW() and CLK_HIGH() to make the pulse wider
         CLK_LOW();
+        dat = dat << 1;
+        --iii;
         CLK_HIGH();
     }
     FSYNC_HIGH();
